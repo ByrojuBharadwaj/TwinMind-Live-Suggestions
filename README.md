@@ -6,8 +6,8 @@ Built for the TwinMind Live Suggestions assignment (April 2026).
 
 ## Demo
 
-- **Deployed app:** _paste your Vercel URL here after deploy_
-- **GitHub repo:** _paste your repo URL here_
+- **Deployed app:** https://twin-mind-live-suggestions-gamma.vercel.app?_vercel_share=JkamAMF5yIMK4w2Wnq21jXAJ3Eh5a0Z7
+- **GitHub repo:** https://github.com/ByrojuBharadwaj/TwinMind-Live-Suggestions
 
 Open the app, paste a Groq API key in Settings, hit **Start mic** — first transcript chunk + batch of 3 suggestions appears within ~30 seconds.
 
