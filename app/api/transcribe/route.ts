@@ -1,16 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-
-/**
- * Proxies audio blobs from the client to Groq's Whisper Large V3 endpoint.
- *
- * Contract:
- *   - POST multipart/form-data with `file` (Blob) and optional `language`
- *   - `Authorization: Bearer <user-supplied Groq key>` header
- *   - Returns `{ text: string }` on success, `{ error: string }` on failure
- *
- * We intentionally forward the user-supplied key rather than reading one
- * from the environment — per the assignment, no key should ship with the app.
- */
+import { extractBearer } from "@/lib/groq";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -19,8 +8,11 @@ const GROQ_URL = "https://api.groq.com/openai/v1/audio/transcriptions";
 const MODEL = "whisper-large-v3";
 
 export async function POST(req: NextRequest) {
-  const auth = req.headers.get("authorization");
-  if (!auth?.startsWith("Bearer ")) {
+  const apiKey =
+    extractBearer(req.headers.get("authorization")) ??
+    process.env.GROQ_API_KEY ??
+    null;
+  if (!apiKey) {
     return NextResponse.json(
       { error: "Missing Groq API key. Add one in Settings." },
       { status: 401 },
@@ -61,7 +53,7 @@ export async function POST(req: NextRequest) {
   try {
     const res = await fetch(GROQ_URL, {
       method: "POST",
-      headers: { Authorization: auth },
+      headers: { Authorization: `Bearer ${apiKey}` },
       body: outgoing,
     });
 

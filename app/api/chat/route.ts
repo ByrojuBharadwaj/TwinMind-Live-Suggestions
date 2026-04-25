@@ -32,7 +32,10 @@ interface RequestBody {
  *                    using the tuned detailed-answer system prompt
  */
 export async function POST(req: NextRequest) {
-  const apiKey = extractBearer(req.headers.get("authorization"));
+  const apiKey =
+    extractBearer(req.headers.get("authorization")) ??
+    process.env.GROQ_API_KEY ??
+    null;
   if (!apiKey) {
     return NextResponse.json(
       { error: "Missing Groq API key." },

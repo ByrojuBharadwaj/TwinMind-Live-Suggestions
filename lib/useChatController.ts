@@ -3,7 +3,7 @@
 import { useCallback, useRef } from "react";
 import { useChatStore } from "@/store/useChatStore";
 import { useSessionStore } from "@/store/useSessionStore";
-import { useSettingsStore } from "@/store/useSettingsStore";
+import { useSettingsStore, SERVER_KEY_AVAILABLE } from "@/store/useSettingsStore";
 import { useSuggestionsStore } from "@/store/useSuggestionsStore";
 import type { Suggestion } from "@/types";
 
@@ -77,7 +77,7 @@ async function streamAssistantResponse({
   const session = useSessionStore.getState();
   const suggestions = useSuggestionsStore.getState();
 
-  if (!settings.groqApiKey) {
+  if (!settings.groqApiKey && !SERVER_KEY_AVAILABLE) {
     chat.setError("Add your Groq API key in Settings first.");
     return;
   }
@@ -120,7 +120,9 @@ async function streamAssistantResponse({
       signal: controller.signal,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${settings.groqApiKey}`,
+        ...(settings.groqApiKey
+          ? { Authorization: `Bearer ${settings.groqApiKey}` }
+          : {}),
       },
       body: JSON.stringify(body),
     });

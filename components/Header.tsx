@@ -11,7 +11,7 @@ import {
   Settings,
 } from "lucide-react";
 import clsx from "clsx";
-import { useSettingsStore } from "@/store/useSettingsStore";
+import { useSettingsStore, SERVER_KEY_AVAILABLE } from "@/store/useSettingsStore";
 import { useSessionStore } from "@/store/useSessionStore";
 import { useSuggestionsStore } from "@/store/useSuggestionsStore";
 import { useChatStore } from "@/store/useChatStore";
@@ -30,7 +30,7 @@ export default function Header({
   onOpenSettings,
   onExport,
 }: HeaderProps) {
-  const hasApiKey = useSettingsStore((s) => Boolean(s.groqApiKey));
+  const hasApiKey = useSettingsStore((s) => Boolean(s.groqApiKey)) || SERVER_KEY_AVAILABLE;
   const startedAt = useSessionStore((s) => s.startedAt);
 
   const chunkCount = useSessionStore((s) => s.chunks.length);

@@ -5,6 +5,10 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import { DEFAULTS } from "@/config/defaults";
 import type { AppSettings } from "@/types";
 
+/** True when NEXT_PUBLIC_HAS_SERVER_KEY=true is set at deploy time. */
+export const SERVER_KEY_AVAILABLE =
+  process.env.NEXT_PUBLIC_HAS_SERVER_KEY === "true";
+
 interface SettingsState extends AppSettings {
   setApiKey: (key: string) => void;
   updateSettings: (patch: Partial<AppSettings>) => void;

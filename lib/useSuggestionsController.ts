@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import { useSessionStore } from "@/store/useSessionStore";
-import { useSettingsStore } from "@/store/useSettingsStore";
+import { useSettingsStore, SERVER_KEY_AVAILABLE } from "@/store/useSettingsStore";
 import { useSuggestionsStore } from "@/store/useSuggestionsStore";
 import { DEFAULTS } from "@/config/defaults";
 import type { Suggestion } from "@/types";
@@ -41,7 +41,7 @@ export function useSuggestionsController(flush: FlushFn) {
       const session = useSessionStore.getState();
       const suggestions = useSuggestionsStore.getState();
 
-      if (!settings.groqApiKey) return;
+      if (!settings.groqApiKey && !SERVER_KEY_AVAILABLE) return;
       if (suggestions.isGenerating) return;
 
       const recentText = session.recentTranscriptText(
@@ -63,7 +63,9 @@ export function useSuggestionsController(flush: FlushFn) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${settings.groqApiKey}`,
+            ...(settings.groqApiKey
+              ? { Authorization: `Bearer ${settings.groqApiKey}` }
+              : {}),
           },
           body: JSON.stringify({
             systemPrompt: settings.liveSuggestionsPrompt,
@@ -186,7 +188,9 @@ async function refreshSummary(): Promise<void> {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${settings.groqApiKey}`,
+        ...(settings.groqApiKey
+          ? { Authorization: `Bearer ${settings.groqApiKey}` }
+          : {}),
       },
       body: JSON.stringify({
         transcript,

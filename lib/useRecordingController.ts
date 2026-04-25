@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import { useSessionStore } from "@/store/useSessionStore";
-import { useSettingsStore } from "@/store/useSettingsStore";
+import { useSettingsStore, SERVER_KEY_AVAILABLE } from "@/store/useSettingsStore";
 import { ChunkedRecorder } from "@/lib/recorder";
 import { runPreflight } from "@/lib/preflight";
 
@@ -33,13 +33,10 @@ export function useRecordingController() {
     if (recorderRef.current) return;
 
     const apiKey = useSettingsStore.getState().groqApiKey;
-    if (!apiKey) {
+    if (!apiKey && !SERVER_KEY_AVAILABLE) {
       throw new Error("Add your Groq API key in Settings first.");
     }
 
-    // Pre-flight gate: browser capability, mic hardware, and key validity.
-    // Runs before we touch the microphone so the user sees an actionable
-    // error instantly instead of a cryptic failure 30 seconds later.
     const check = await runPreflight({ apiKey });
     if (!check.ok) {
       const msg = check.hint ? `${check.reason} ${check.hint}` : check.reason;
@@ -122,7 +119,7 @@ async function transcribeWithRetry({
 
       const res = await fetch("/api/transcribe", {
         method: "POST",
-        headers: { Authorization: `Bearer ${apiKey}` },
+        headers: apiKey ? { Authorization: `Bearer ${apiKey}` } : {},
         body: fd,
       });
 

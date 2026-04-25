@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Eye, EyeOff, RotateCcw, X } from "lucide-react";
-import { useSettingsStore } from "@/store/useSettingsStore";
+import { useSettingsStore, SERVER_KEY_AVAILABLE } from "@/store/useSettingsStore";
 import type { AppSettings } from "@/types";
 
 interface SettingsModalProps {
@@ -60,7 +60,14 @@ export default function SettingsModal({ open, onClose }: SettingsModalProps) {
         </div>
 
         <div className="scrollbar-thin max-h-[70vh] overflow-y-auto px-5 py-4">
-          <Section title="Groq API Key" help="Paste your own Groq key. Stored only in this browser (localStorage).">
+          <Section
+            title="Groq API Key"
+            help={
+              SERVER_KEY_AVAILABLE
+                ? "A server key is pre-configured — the app works without one. Paste your own key here to override it."
+                : "Paste your own Groq key. Stored only in this browser (localStorage)."
+            }
+          >
             <div className="relative">
               <input
                 type={showKey ? "text" : "password"}

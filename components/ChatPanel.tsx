@@ -10,7 +10,7 @@ import {
 import { Check, Copy, MessageSquare, Send, Square } from "lucide-react";
 import clsx from "clsx";
 import { useChatStore } from "@/store/useChatStore";
-import { useSettingsStore } from "@/store/useSettingsStore";
+import { useSettingsStore, SERVER_KEY_AVAILABLE } from "@/store/useSettingsStore";
 import type { ChatMessage } from "@/types";
 import MarkdownMessage from "@/components/MarkdownMessage";
 
@@ -24,7 +24,7 @@ export default function ChatPanel({ onSend, onStop }: ChatPanelProps) {
   const isStreaming = useChatStore((s) => s.isStreaming);
   const lastError = useChatStore((s) => s.lastError);
   const setError = useChatStore((s) => s.setError);
-  const hasApiKey = useSettingsStore((s) => Boolean(s.groqApiKey));
+  const hasApiKey = useSettingsStore((s) => Boolean(s.groqApiKey)) || SERVER_KEY_AVAILABLE;
 
   const [draft, setDraft] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);

@@ -15,7 +15,10 @@ export const runtime = "nodejs";
 const GROQ_MODELS_URL = "https://api.groq.com/openai/v1/models";
 
 export async function GET(req: NextRequest) {
-  const apiKey = extractBearer(req.headers.get("authorization"));
+  const apiKey =
+    extractBearer(req.headers.get("authorization")) ??
+    process.env.GROQ_API_KEY ??
+    null;
   if (!apiKey) {
     return NextResponse.json(
       { ok: false, error: "Missing Groq API key." },
